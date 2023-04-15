@@ -213,7 +213,8 @@ export default {
             //创建相机（透视投影相机）
             this.camera = new THREE.PerspectiveCamera(35, this.width / this.height, 0.1, 30000000000);
             // this.camera.position.set(20, 20, 20);//相机位置
-            this.camera.position.set(17.652062595090246, 14.03474306553617, -38.67363129267151);//相机位置
+            // this.camera.position.set(17.652062595090246, 14.03474306553617, -38.67363129267151);//相机位置
+            this.camera.position.set(57.30517254280502, 28.376552724614044, -52.67741874961233);//相机位置
             //相机的方向
             this.camera.lookAt(0, 0, 0)
 
