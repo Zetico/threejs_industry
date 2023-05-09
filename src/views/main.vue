@@ -1,6 +1,8 @@
 <template>
     <el-container>
-        <el-header>Header</el-header>
+        <el-header>
+            <el-button @click="quzoucailiao">kaishi</el-button>
+        </el-header>
         <div class="main" ref="main">
             <el-main id="webgl">
             </el-main>
@@ -24,6 +26,8 @@ export default {
             controls: null,
             width: null,
             height: null,
+            donghuazhuangtai: 0,
+            jiazai:0
         }
     },
     methods: {
@@ -55,9 +59,9 @@ export default {
 
             //轨道
             const guidao1 = this.guidao();
-            guidao1.position.set(-15, 0.5, -5);//定义位置 
+            guidao1.position.set(-10, 0.5, -5);//定义位置 
             const guidao2 = this.guidao();
-            guidao2.position.set(-15, 0.5, -8);//定义位置
+            guidao2.position.set(-10, 0.5, -8);//定义位置
             this.scene.add(guidao1);
             this.scene.add(guidao2);
 
@@ -65,12 +69,10 @@ export default {
             const guidaoche = this.guidaoche();
             guidaoche.position.set(-1, 1, -6);//定义位置
             this.scene.add(guidaoche);
-            this.dbkaiqi('db1');
-            // this.dizuoxuanzhuan1()
-            // this.jiaozheng1()
 
             //导入collada模型
             const cloader = new ColladaLoader();
+            //第一个
             cloader.load('./机械臂.dae', (collada) => {
                 const dae = collada.scene;
                 this.scene.add(dae);
@@ -81,10 +83,26 @@ export default {
                     }
                 })
                 dae.scale.x = dae.scale.y = dae.scale.z = 4;
-                dae.translateY(20);
-                dae.rotateZ(-Math.PI / 2);
+                dae.translateY(16);
+                dae.translateX(-5);
+                // dae.rotateZ(-Math.PI / 2);
             })
-
+            //第二个
+            cloader.load('./机械臂.dae', (collada) => {
+                const dae = collada.scene;
+                this.scene.add(dae);
+                dae.traverse((child) => {
+                    if (child.isMesh) {
+                        child.material.flatShading = true;
+                        child.material.color = new THREE.Color(0x993300);
+                    }
+                })
+                dae.scale.x = dae.scale.y = dae.scale.z = 4;
+                dae.translateY(30);
+                dae.translateX(-38);
+                // dae.rotateZ(-Math.PI / 2);
+            })
+            //第三个
             const loader = new GLTFLoader();
             loader.load('./机柜.glb', (gltf) => {
                 const model = gltf.scene;
@@ -145,7 +163,7 @@ export default {
                 this.scene.add(model);
             })
 
-            loader.load('./传送带.gltf', (gltf) => {
+            loader.load('./传送带.glb', (gltf) => {
                 const model = gltf.scene;
                 model.traverse((child) => {
                     if (child.isMesh) {
@@ -153,15 +171,82 @@ export default {
                         child.material.color = new THREE.Color(0x333333);
                     }
                 })
-                model.scale.set(3, 3, 3);
-                // model.translateX(-27);
-                // model.translateZ(-10)
-                // model.translateY(5);
-                model.rotateY(Math.PI );
-                model.translateZ(57);
-                model.translateX(15);
+                model.scale.set(1.5, 1.5, 1.5);
+                model.rotateY(-Math.PI / 5);
+                model.translateX(-45);
+                model.translateZ(-5);
                 this.scene.add(model);
             })
+            //第一个
+            loader.load('./液压机.glb', (gltf) => {
+                const model = gltf.scene;
+                model.scale.set(1.1, 2, 1.1);
+                model.translateX(-3);
+                model.translateZ(-21);
+                model.rotateY(Math.PI / 2);
+                this.scene.add(model);
+            })
+            //第二个
+            loader.load('./液压机.glb', (gltf) => {
+                const model = gltf.scene;
+                model.scale.set(1.1, 2, 1.1);
+                model.translateX(-38);
+                model.translateZ(-25);
+                model.rotateY(Math.PI / 2);
+                this.scene.add(model);
+            })
+
+
+            loader.load('./工作台.glb', (gltf) => {
+                const model = gltf.scene;
+                model.translateX(-10);
+                model.translateZ(-15);
+                model.translateY(1);
+
+                this.scene.add(model);
+            })
+
+            loader.load('./置物台.glb', (gltf) => {
+                const model = gltf.scene;
+                model.translateX(-44);
+                model.translateZ(-30);
+                model.translateY(1);
+
+                this.scene.add(model);
+            })
+
+            loader.load('./零件.glb', (gltf) => {
+                const model = gltf.scene;
+                // model.translateX(-10);
+                // model.translateZ(-15);
+                model.scale.set(2.5,2.5,2.5);
+                model.translateY(1.59);
+                model.translateZ(1.6);
+                model.name = '零件';
+                this.scene.add(model);
+                this.jiazai = 1;
+            })
+            loader.onLoad = () => {
+                console.log('零件加载完成')
+            }
+
+
+            // loader.load('./大玩意.glb', (gltf) => {
+            //     const model = gltf.scene;
+            //     model.scale.set(5, 5, 5);
+            //     model.traverse((child) => {
+            //         if (child.isMesh) {
+            //             child.material.flatShading = true;
+            //             child.material.color = new THREE.Color(0x333333);
+            //         }
+            //     })
+            //     // // model.translateX(-27);
+            //     // // model.translateZ(-10)
+            //     // model.translateY(5);
+            //     model.translateZ(50);
+            //     // model.translateX(0.6-20);
+            //     this.scene.add(model);
+            // })
 
 
             const sq = new THREE.PlaneGeometry(500, 500);
@@ -170,25 +255,6 @@ export default {
             dibancaizhi.wrapT = THREE.RepeatWrapping;
             dibancaizhi.repeat.set(100, 100);
             const grassMaterial = new THREE.MeshBasicMaterial({ map: dibancaizhi });
-
-            loader.load('./大玩意.glb', (gltf) => {
-                const model = gltf.scene;
-                model.scale.set(5, 5, 5);
-                model.traverse((child) => {
-                    if (child.isMesh) {
-                        child.material.flatShading = true;
-                        child.material.color = new THREE.Color(0x333333);
-                    }
-                })
-                // // model.translateX(-27);
-                // // model.translateZ(-10)
-                // model.translateY(5);
-                model.translateZ(50);
-                // model.translateX(0.6-20);
-                this.scene.add(model);
-            })
-
-
 
 
             //定义一个网格模型，表示物体
@@ -212,9 +278,7 @@ export default {
 
             //创建相机（透视投影相机）
             this.camera = new THREE.PerspectiveCamera(35, this.width / this.height, 0.1, 30000000000);
-            // this.camera.position.set(20, 20, 20);//相机位置
-            // this.camera.position.set(17.652062595090246, 14.03474306553617, -38.67363129267151);//相机位置
-            this.camera.position.set(57.30517254280502, 28.376552724614044, -52.67741874961233);//相机位置
+            this.camera.position.set(50, 51, 50);//相机位置
             //相机的方向
             this.camera.lookAt(0, 0, 0)
 
@@ -258,6 +322,11 @@ export default {
             requestAnimationFrame(this.animate);//一直循环执行，每秒执行60次
             this.controls.update();
             this.renderer.render(this.scene, this.camera);//渲染
+            // console.log(this.camera.position)
+            // if(this.jiazai == 1){
+            //     console.log("加载完成")
+            //     console.log(this.scene.getObjectByName('零件'))
+            // }
 
         },
         jrl() {
@@ -470,7 +539,7 @@ export default {
                 // opacity:0.6//透明程度
                 side: THREE.DoubleSide,
             })
-            const guidao = new THREE.BoxGeometry(50, 0.5, 0.5);//定义长方体
+            const guidao = new THREE.BoxGeometry(30, 0.5, 0.5);//定义长方体
             const guidao1 = new THREE.Mesh(guidao, guidaocaizhi);
             return guidao1
         },
@@ -652,6 +721,9 @@ export default {
                 .to({ y: 0 }, 3000)
                 .easing(TWEEN.Easing.Quadratic.InOut)
                 .start()
+                .onComplete(() => {
+                    this.donghuazhuangtai = 0;
+                })
         },
         jiaozheng1() {
             const tween = new TWEEN.Tween(this.scene.getObjectByName('xuanzhuan').position)
@@ -666,6 +738,15 @@ export default {
                 .easing(TWEEN.Easing.Quadratic.InOut)
                 .start();
         },
+        quzoucailiao() {
+            //触发取走材料动画
+            if (this.donghuazhuangtai == 0) {
+                this.donghuazhuangtai = 1;
+                this.dbkaiqi("db1");
+            } else {
+                alert("请先完成当前动画");
+            }
+        }
     },
     mounted() {
         this.init();
