@@ -1,7 +1,11 @@
 <template>
     <el-container>
         <el-header>
-            <el-button @click="quzoucailiao">kaishi</el-button>
+            <el-button @click="quzoucailiao1">一号炉子</el-button>
+            <el-button @click="quzoucailiao2">二号炉子</el-button>
+            <el-button @click="quzoucailiao3">三号炉子</el-button>
+            <el-button @click="jixxiebi1">机械臂1</el-button>
+
         </el-header>
         <div class="main" ref="main">
             <el-main id="webgl">
@@ -27,11 +31,14 @@ export default {
             width: null,
             height: null,
             donghuazhuangtai: 0,
-            jiazai:0
+            jiazai:20,
+            k1:null,
+            k2:null,
+            k3:null,
         }
     },
     methods: {
-        init() {
+         init() {
             this.width = this.$refs.main.offsetWidth
             this.height = this.$refs.main.offsetHeight
             //创建三维场景
@@ -73,8 +80,15 @@ export default {
             //导入collada模型
             const cloader = new ColladaLoader();
             //第一个
-            cloader.load('./机械臂.dae', (collada) => {
+            cloader.load('./机械臂.dae', (collada)=>{
                 const dae = collada.scene;
+                this.k1 = collada.kinematics;
+                console.log(dae.children[0].children[0].children[1].children[0].children[0].children[0]);
+                // dae.children[0].children[0].children[1].children[0].children[0].children[0].position.set(20, 20, 20);
+                // dae.children[0].children[0].children[1].children[0].children[0].children[0].scale.set(20, 20, 20);
+                // console.log(dae);
+                // console.log(this.k1)
+                dae.name = "机械臂1"
                 this.scene.add(dae);
                 dae.traverse((child) => {
                     if (child.isMesh) {
@@ -85,11 +99,20 @@ export default {
                 dae.scale.x = dae.scale.y = dae.scale.z = 4;
                 dae.translateY(16);
                 dae.translateX(-5);
-                // dae.rotateZ(-Math.PI / 2);
+            }, (xhr)=>{
+                if(xhr.loaded == 5157221){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
             })
+
             //第二个
             cloader.load('./机械臂.dae', (collada) => {
                 const dae = collada.scene;
+                this.k2 = collada.kinematics;
+                dae.name = "机械臂2"
                 this.scene.add(dae);
                 dae.traverse((child) => {
                     if (child.isMesh) {
@@ -100,7 +123,13 @@ export default {
                 dae.scale.x = dae.scale.y = dae.scale.z = 4;
                 dae.translateY(30);
                 dae.translateX(-38);
-                // dae.rotateZ(-Math.PI / 2);
+            }, (xhr)=>{
+                if(xhr.loaded == 5157221){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
             })
             //第三个
             const loader = new GLTFLoader();
@@ -117,8 +146,16 @@ export default {
                 model.translateX(-25);
                 model.translateZ(-10)
                 this.scene.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 1430660){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
             })
-            loader.load('./机柜.glb', (gltf) => {
+
+             loader.load('./机柜.glb', (gltf) => {
                 const model = gltf.scene;
                 model.traverse((child) => {
                     if (child.isMesh) {
@@ -131,7 +168,14 @@ export default {
                 model.translateX(-27);
                 model.translateZ(-10)
                 this.scene.add(model);
-            })
+            }, (xhr)=>{
+                 if(xhr.loaded == 1430660){
+                     this.jiazai--;
+                     console.log('加载完成'+this.jiazai);
+                 }else{
+                     console.log('加载中');
+                 }
+             })
             loader.load('./风扇.glb', (gltf) => {
                 const model = gltf.scene;
                 model.scale.set(1.5, 1.5, 1.5);
@@ -141,6 +185,13 @@ export default {
                 model.translateZ(14.5);
                 model.translateX(0.6);
                 this.scene.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 204676){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
             })
             loader.load('./风扇.glb', (gltf) => {
                 const model = gltf.scene;
@@ -151,6 +202,13 @@ export default {
                 model.translateZ(14.5);
                 model.translateX(0.6 - 10);
                 this.scene.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 204676){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
             })
             loader.load('./风扇.glb', (gltf) => {
                 const model = gltf.scene;
@@ -161,6 +219,13 @@ export default {
                 model.translateZ(14.5);
                 model.translateX(0.6 - 20);
                 this.scene.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 204676){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
             })
 
             loader.load('./传送带.glb', (gltf) => {
@@ -176,6 +241,14 @@ export default {
                 model.translateX(-45);
                 model.translateZ(-5);
                 this.scene.add(model);
+            }, (xhr)=>{
+                console.log(xhr)
+                if(xhr.loaded == 313024){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
             })
             //第一个
             loader.load('./液压机.glb', (gltf) => {
@@ -185,6 +258,13 @@ export default {
                 model.translateZ(-21);
                 model.rotateY(Math.PI / 2);
                 this.scene.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 167817484){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
             })
             //第二个
             loader.load('./液压机.glb', (gltf) => {
@@ -194,6 +274,13 @@ export default {
                 model.translateZ(-25);
                 model.rotateY(Math.PI / 2);
                 this.scene.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 167817484){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
             })
 
 
@@ -204,6 +291,13 @@ export default {
                 model.translateY(1);
 
                 this.scene.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 8304){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
             })
 
             loader.load('./置物台.glb', (gltf) => {
@@ -213,23 +307,138 @@ export default {
                 model.translateY(1);
 
                 this.scene.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 8256){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
             })
-
+            //加热炉一中的零件
+            loader.load('./未加工物料.glb', (gltf) => {
+                const model = gltf.scene;
+                model.scale.set(2.5,2.5,2.5);
+                model.translateX(-1.8);
+                model.translateY(0.3);
+                model.translateZ(1.6);
+                model.name = '未加工物料1';
+                this.scene.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 2148){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
+            })
+            //加热炉二中的零件
+            loader.load('./未加工物料.glb', (gltf) => {
+                const model = gltf.scene;
+                model.scale.set(2.5,2.5,2.5);
+                model.translateY(0.3);
+                model.translateZ(1.6);
+                model.translateX(-11.8);
+                model.name = '未加工物料2';
+                this.scene.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 2148){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
+            })
+            //加热炉三中的零件
+            loader.load('./未加工物料.glb', (gltf) => {
+                const model = gltf.scene;
+                model.scale.set(2.5,2.5,2.5);
+                model.translateY(0.3);
+                model.translateZ(1.6);
+                model.translateX(-21.8);
+                model.name = '未加工物料3';
+                this.scene.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 2148){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
+            })
+            //工作台上的未加工物料
+            loader.load('./未加工物料.glb', (gltf) => {
+                const model = gltf.scene;
+                model.scale.set(2.5,2.5,2.5);
+                model.translateY(1.1);
+                model.translateZ(-16);
+                model.translateX(-11.8);
+                model.name = '未加工物料4';
+                model.visible = false;
+                this.scene.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 2148){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
+            })
+            //工作台上的零件
             loader.load('./零件.glb', (gltf) => {
                 const model = gltf.scene;
-                // model.translateX(-10);
-                // model.translateZ(-15);
                 model.scale.set(2.5,2.5,2.5);
-                model.translateY(1.59);
-                model.translateZ(1.6);
-                model.name = '零件';
+                model.translateY(2.2);
+                model.translateZ(-14.5);
+                model.translateX(-10.3);
+                model.name = '零件1';
+                model.visible = false;
                 this.scene.add(model);
-                this.jiazai = 1;
+            }, (xhr)=>{
+                if(xhr.loaded == 315688){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
             })
-            loader.onLoad = () => {
-                console.log('零件加载完成')
-            }
 
+            //第一个机械臂上的零件
+            loader.load('./零件.glb', (gltf) => {
+                const model = gltf.scene;
+                model.scale.set(2.5,2.5,2.5);
+                model.translateY(3.5);
+                model.translateZ(-15.7);
+                model.translateX(-2.3);
+                model.name = '零件2';
+                model.visible = false;
+                this.scene.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 315688){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
+            })
+            //第一个机械臂上的未加工物料
+            loader.load('./未加工物料.glb', (gltf) => {
+                const model = gltf.scene;
+                model.scale.set(2.5,2.5,2.5);
+                model.translateY(2.2);
+                model.translateZ(-17.4);
+                model.translateX(-3.7);
+                model.name = '未加工物料5';
+                model.visible = true;
+                this.scene.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 2148){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
+            })
 
             // loader.load('./大玩意.glb', (gltf) => {
             //     const model = gltf.scene;
@@ -275,6 +484,9 @@ export default {
             //环境光
             const light = new THREE.AmbientLight(0x404040); // soft white light
             this.scene.add(light);
+            // //平行光
+            // const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+            // this.scene.add( directionalLight );
 
             //创建相机（透视投影相机）
             this.camera = new THREE.PerspectiveCamera(35, this.width / this.height, 0.1, 30000000000);
@@ -322,11 +534,6 @@ export default {
             requestAnimationFrame(this.animate);//一直循环执行，每秒执行60次
             this.controls.update();
             this.renderer.render(this.scene, this.camera);//渲染
-            // console.log(this.camera.position)
-            // if(this.jiazai == 1){
-            //     console.log("加载完成")
-            //     console.log(this.scene.getObjectByName('零件'))
-            // }
 
         },
         jrl() {
@@ -501,6 +708,16 @@ export default {
         },
 
         dbguanbi(dbname) {
+            let lj = null;
+            if(dbname == "db1"){
+                lj = "未加工物料1"
+            };
+            if(dbname == "db2"){
+                lj = "未加工物料2"
+            };
+            if(dbname == "db3"){
+                lj = "未加工物料3"
+            };
             //tween动画 
             const tween1 = new TWEEN.Tween(this.scene.getObjectByName(dbname).position)
             tween1.to({
@@ -526,8 +743,7 @@ export default {
             tween1.start();
             tween1.chain(tween2);
             tween2.onComplete(() => {
-                this.dizuoxuanzhuan1();
-                this.jiaozheng1();
+                this.scene.getObjectByName(lj).visible = true;
             })
             // tween2.repeat(1);
         },
@@ -669,9 +885,37 @@ export default {
             guidaoche.add(dizuog);
             guidaoche.add(xuanzhuan);
 
+            const loader = new GLTFLoader ;
+            loader.load('./未加工物料.glb', (gltf) => {
+                const model = gltf.scene;
+                model.scale.set(2.5,2.5,2.5);
+                model.translateX(-0.8);
+                model.translateY(-0.5);
+                model.translateZ(3);
+                model.name = '车上零件';
+                model.visible = false;
+                zhuazixuan.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 2148){
+                    this.jiazai--;
+                    console.log('加载完成'+this.jiazai);
+                }else{
+                    console.log('加载中');
+                }
+            })
             return guidaoche
         },
         zhuazizhuaqu(dbname) {
+            let lj = null;
+            if(dbname == "db1"){
+                lj = "未加工物料1"
+            };
+            if(dbname == "db2"){
+                lj = "未加工物料2"
+            };
+            if(dbname == "db3"){
+                lj = "未加工物料3"
+            };
             const tween = new TWEEN.Tween(this.scene.getObjectByName('zhuazixuan').position)
             tween.to({
                 x: 0,
@@ -685,6 +929,8 @@ export default {
             tween.delay(1000);
             tween.start();
             tween.onComplete(() => {
+                this.scene.getObjectByName(lj).visible = false;
+                this.scene.getObjectByName("车上零件").visible = true;
                 this.zhuazishousuo(dbname);
             })
 
@@ -703,6 +949,7 @@ export default {
             tween.delay(1000);
             tween.start();
             tween.onComplete(() => {
+                this.yunxingdaogzt();
                 this.dbguanbi(dbname);
             })
         },
@@ -711,9 +958,9 @@ export default {
                 .to({ y: Math.PI }, 3000)
                 .easing(TWEEN.Easing.Quadratic.InOut)
                 .start()
+                .delay(1000)
                 .onComplete(() => {
-                    this.dizuoxuanzhuan2();
-                    this.jiaozheng2();
+                    this.zhuazifangzhi()
                 })
         },
         dizuoxuanzhuan2() {
@@ -738,15 +985,110 @@ export default {
                 .easing(TWEEN.Easing.Quadratic.InOut)
                 .start();
         },
-        quzoucailiao() {
+        yunxingdaogzt(){
+            const tween = new TWEEN.Tween(this.scene.getObjectByName('guidaoche').position)
+            tween.to({
+                x: -11
+            }, 2000)
+            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            tween.onComplete(() => {
+                this.dizuoxuanzhuan1();
+                this.jiaozheng1();
+            })
+            tween.start();
+        },
+        zhuazifangzhi(){
+            const tween = new TWEEN.Tween(this.scene.getObjectByName('zhuazixuan').position)
+            tween.to({
+                x: 0,
+                y: 0,
+                z: 2
+            }, 1000)
+            tween.onUpdate(() => {
+                this.scene.getObjectByName('zhuazixuan').position.set(this.scene.getObjectByName('zhuazixuan').position.x, this.scene.getObjectByName('zhuazixuan').position.y, this.scene.getObjectByName('zhuazixuan').position.z);
+            })
+            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            tween.delay(1000);
+            tween.start();
+            tween.onComplete(() => {
+                this.scene.getObjectByName("车上零件").visible = false;
+                this.scene.getObjectByName("未加工物料4").visible = true;
+                this.zhuazifangzhishousuo()
+            })
+        },
+        zhuazifangzhishousuo(){
+            const tween = new TWEEN.Tween(this.scene.getObjectByName('zhuazixuan').position)
+            tween.to({
+                x: 0,
+                y: 0,
+                z: 0
+            }, 1000)
+            tween.onUpdate(() => {
+                this.scene.getObjectByName('zhuazixuan').position.set(this.scene.getObjectByName('zhuazixuan').position.x, this.scene.getObjectByName('zhuazixuan').position.y, this.scene.getObjectByName('zhuazixuan').position.z);
+            })
+            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            tween.delay(1000);
+            tween.start();
+            tween.onComplete(() => {
+                this.dizuoxuanzhuan2();
+                this.jiaozheng2();
+            })
+        },
+        quzoucailiao1() {
             //触发取走材料动画
             if (this.donghuazhuangtai == 0) {
                 this.donghuazhuangtai = 1;
-                this.dbkaiqi("db1");
+                const tween = new TWEEN.Tween(this.scene.getObjectByName('guidaoche').position)
+                tween.to({
+                    x: -1
+                }, 2000)
+                tween.easing(TWEEN.Easing.Quadratic.InOut)
+                tween.start();
+                tween.onComplete(() => {
+                    this.dbkaiqi("db1");
+                })
             } else {
                 alert("请先完成当前动画");
             }
+        },
+        quzoucailiao2() {
+            //触发取走材料动画
+            if (this.donghuazhuangtai == 0) {
+                this.donghuazhuangtai = 1;
+                const tween = new TWEEN.Tween(this.scene.getObjectByName('guidaoche').position)
+                tween.to({
+                    x: -11
+                }, 2000)
+                tween.easing(TWEEN.Easing.Quadratic.InOut)
+                tween.start();
+                tween.onComplete(() => {
+                    this.dbkaiqi("db2");
+                })
+            } else {
+                alert("请先完成当前动画");
+            }
+        },
+        quzoucailiao3() {
+            //触发取走材料动画
+            if (this.donghuazhuangtai == 0) {
+                this.donghuazhuangtai = 1;
+                const tween = new TWEEN.Tween(this.scene.getObjectByName('guidaoche').position)
+                tween.to({
+                    x: -21
+                }, 2000)
+                tween.easing(TWEEN.Easing.Quadratic.InOut)
+                tween.start();
+                tween.onComplete(() => {
+                    this.dbkaiqi("db3");
+                })
+            } else {
+                alert("请先完成当前动画");
+            }
+        },
+        jixxiebi1(){
+            console.log(this.k1);
         }
+
     },
     mounted() {
         this.init();
