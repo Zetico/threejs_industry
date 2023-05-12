@@ -5,6 +5,8 @@
             <el-button @click="quzoucailiao2">二号炉子</el-button>
             <el-button @click="quzoucailiao3">三号炉子</el-button>
             <el-button @click="jixxiebi1">机械臂1</el-button>
+            <el-button @click="yeyaji">液压机</el-button>
+
 
         </el-header>
         <div class="main" ref="main">
@@ -31,10 +33,13 @@ export default {
             width: null,
             height: null,
             donghuazhuangtai: 0,
-            jiazai:20,
+            jiazai:21,
             k1:null,
             k2:null,
             k3:null,
+            paras1:{},
+            paras2:{},
+            paras3:{},
         }
     },
     methods: {
@@ -83,7 +88,14 @@ export default {
             cloader.load('./机械臂.dae', (collada)=>{
                 const dae = collada.scene;
                 this.k1 = collada.kinematics;
-                console.log(dae.children[0].children[0].children[1].children[0].children[0].children[0]);
+                for(const prop in this.k1.joints){
+                    if(!this.k1.joints[prop].static){
+                        const joint = this.k1.joints[prop];
+                        const position = joint.zeroPosition;
+                        this.paras1[prop] =position;
+                    }
+                }
+                // console.log(dae.children[0].children[0].children[1].children[0].children[0].children[0]);
                 // dae.children[0].children[0].children[1].children[0].children[0].children[0].position.set(20, 20, 20);
                 // dae.children[0].children[0].children[1].children[0].children[0].children[0].scale.set(20, 20, 20);
                 // console.log(dae);
@@ -102,9 +114,7 @@ export default {
             }, (xhr)=>{
                 if(xhr.loaded == 5157221){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('第一个机械臂加载完成'+this.jiazai);
                 }
             })
 
@@ -112,6 +122,13 @@ export default {
             cloader.load('./机械臂.dae', (collada) => {
                 const dae = collada.scene;
                 this.k2 = collada.kinematics;
+                for(const prop in this.k2.joints){
+                    if(!this.k2.joints[prop].static){
+                        const joint = this.k2.joints[prop];
+                        const position = joint.zeroPosition;
+                        this.paras2[prop] =position;
+                    }
+                }
                 dae.name = "机械臂2"
                 this.scene.add(dae);
                 dae.traverse((child) => {
@@ -126,9 +143,7 @@ export default {
             }, (xhr)=>{
                 if(xhr.loaded == 5157221){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('第二个机械臂加载完成'+this.jiazai);
                 }
             })
             //第三个
@@ -149,9 +164,7 @@ export default {
             }, (xhr)=>{
                 if(xhr.loaded == 1430660){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('机柜1加载完成'+this.jiazai);
                 }
             })
 
@@ -171,9 +184,7 @@ export default {
             }, (xhr)=>{
                  if(xhr.loaded == 1430660){
                      this.jiazai--;
-                     console.log('加载完成'+this.jiazai);
-                 }else{
-                     console.log('加载中');
+                     console.log('机柜2加载完成'+this.jiazai);
                  }
              })
             loader.load('./风扇.glb', (gltf) => {
@@ -188,9 +199,7 @@ export default {
             }, (xhr)=>{
                 if(xhr.loaded == 204676){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('风扇1加载完成'+this.jiazai);
                 }
             })
             loader.load('./风扇.glb', (gltf) => {
@@ -205,9 +214,7 @@ export default {
             }, (xhr)=>{
                 if(xhr.loaded == 204676){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('风扇2加载完成'+this.jiazai);
                 }
             })
             loader.load('./风扇.glb', (gltf) => {
@@ -222,64 +229,61 @@ export default {
             }, (xhr)=>{
                 if(xhr.loaded == 204676){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('风扇3加载完成'+this.jiazai);
                 }
             })
 
             loader.load('./传送带.glb', (gltf) => {
                 const model = gltf.scene;
-                model.traverse((child) => {
-                    if (child.isMesh) {
-                        child.material.flatShading = true;
-                        child.material.color = new THREE.Color(0x333333);
-                    }
-                })
                 model.scale.set(1.5, 1.5, 1.5);
                 model.rotateY(-Math.PI / 5);
-                model.translateX(-45);
+                model.translateX(-46);
                 model.translateZ(-5);
                 this.scene.add(model);
             }, (xhr)=>{
-                console.log(xhr)
-                if(xhr.loaded == 313024){
+                if(xhr.loaded == 316868){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('传送带加载完成'+this.jiazai);
                 }
             })
             //第一个
             loader.load('./液压机.glb', (gltf) => {
                 const model = gltf.scene;
-                model.scale.set(1.1, 2, 1.1);
+                model.traverse((child) => {
+                    // 模型转到一定角度消失 DoubleSide 解决
+                    if (child.material) {
+                        child.material.side = THREE.DoubleSide;
+                    }
+                });
+                model.scale.set(1.6, 1.6, 1.6);
                 model.translateX(-3);
-                model.translateZ(-21);
+                model.translateZ(-22);
                 model.rotateY(Math.PI / 2);
                 this.scene.add(model);
             }, (xhr)=>{
-                if(xhr.loaded == 167817484){
+                if(xhr.loaded == 167835804){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('液压机加载完成'+this.jiazai);
                 }
             })
             //第二个
-            loader.load('./液压机.glb', (gltf) => {
+            loader.load('./切边机.glb', (gltf) => {
                 const model = gltf.scene;
+                model.traverse((child) => {
+                    // 模型转到一定角度消失 DoubleSide 解决
+                    if (child.material) {
+                        child.material.side = THREE.DoubleSide;
+                    }
+                });
                 model.scale.set(1.1, 2, 1.1);
                 model.translateX(-38);
                 model.translateZ(-25);
                 model.rotateY(Math.PI / 2);
                 this.scene.add(model);
             }, (xhr)=>{
-                if(xhr.loaded == 167817484){
+                if(xhr.loaded == 167830104){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('切边机加载完成'+this.jiazai);
                 }
             })
 
@@ -294,9 +298,7 @@ export default {
             }, (xhr)=>{
                 if(xhr.loaded == 8304){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('工作台加载完成'+this.jiazai);
                 }
             })
 
@@ -310,9 +312,7 @@ export default {
             }, (xhr)=>{
                 if(xhr.loaded == 8256){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('置物台加载完成'+this.jiazai);
                 }
             })
             //加热炉一中的零件
@@ -327,9 +327,7 @@ export default {
             }, (xhr)=>{
                 if(xhr.loaded == 2148){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('加热炉一中的零件加载完成'+this.jiazai);
                 }
             })
             //加热炉二中的零件
@@ -344,9 +342,7 @@ export default {
             }, (xhr)=>{
                 if(xhr.loaded == 2148){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('加热炉二中的零件加载完成'+this.jiazai);
                 }
             })
             //加热炉三中的零件
@@ -361,9 +357,7 @@ export default {
             }, (xhr)=>{
                 if(xhr.loaded == 2148){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('加热炉三中的零件加载完成'+this.jiazai);
                 }
             })
             //工作台上的未加工物料
@@ -379,9 +373,7 @@ export default {
             }, (xhr)=>{
                 if(xhr.loaded == 2148){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('工作台上的未加工物料加载完成'+this.jiazai);
                 }
             })
             //工作台上的零件
@@ -397,49 +389,58 @@ export default {
             }, (xhr)=>{
                 if(xhr.loaded == 315688){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('工作台上的零件加载完成'+this.jiazai);
                 }
             })
 
-            //第一个机械臂上的零件
+            //液压机上的零件
             loader.load('./零件.glb', (gltf) => {
                 const model = gltf.scene;
                 model.scale.set(2.5,2.5,2.5);
-                model.translateY(3.5);
-                model.translateZ(-15.7);
-                model.translateX(-2.3);
+                model.translateY(2);
+                model.translateZ(-21);
+                model.translateX(-2.7);
                 model.name = '零件2';
                 model.visible = false;
                 this.scene.add(model);
             }, (xhr)=>{
                 if(xhr.loaded == 315688){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('第一个机械臂上的零件加载完成'+this.jiazai);
                 }
             })
-            //第一个机械臂上的未加工物料
+            //液压机上的未加工物料
             loader.load('./未加工物料.glb', (gltf) => {
                 const model = gltf.scene;
                 model.scale.set(2.5,2.5,2.5);
-                model.translateY(2.2);
-                model.translateZ(-17.4);
-                model.translateX(-3.7);
+                model.translateY(0.5);
+                model.translateZ(-23);
+                model.translateX(-4.3);
                 model.name = '未加工物料5';
-                model.visible = true;
+                model.visible = false;
                 this.scene.add(model);
             }, (xhr)=>{
                 if(xhr.loaded == 2148){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('第一个机械臂上的未加工物料加载完成'+this.jiazai);
                 }
             })
-
+             //切片机上的零件
+             loader.load('./零件.glb', (gltf) => {
+                 const model = gltf.scene;
+                 model.scale.set(2.5,2.5,2.5);
+                 model.translateY(2.3);
+                 model.translateZ(-24.7);
+                 model.translateX(-38);
+                 model.name = '零件3';
+                 model.visible = true;
+                 this.scene.add(model);
+             }, (xhr)=>{
+                 if(xhr.loaded == 315688){
+                     this.jiazai--;
+                     console.log('第一个机械臂上的零件加载完成'+this.jiazai);
+                 }
+             })
             // loader.load('./大玩意.glb', (gltf) => {
             //     const model = gltf.scene;
             //     model.scale.set(5, 5, 5);
@@ -478,9 +479,14 @@ export default {
             this.scene.add(axesHelper);
 
             //创建一个点光源
-            const pointlight = new THREE.PointLight(0xffffff, 1.0);
+            const pointlight = new THREE.PointLight(0xffffff, 0.2);
             pointlight.position.set(400, 200, -100);
             this.scene.add(pointlight);
+
+             const pointlight2 = new THREE.PointLight(0xffffff, 0.2);
+             pointlight2.position.set(400, 200, 100);
+             this.scene.add(pointlight2);
+
             //环境光
             const light = new THREE.AmbientLight(0x404040); // soft white light
             this.scene.add(light);
@@ -534,6 +540,8 @@ export default {
             requestAnimationFrame(this.animate);//一直循环执行，每秒执行60次
             this.controls.update();
             this.renderer.render(this.scene, this.camera);//渲染
+            if(this.jiazai == 0){
+            }
 
         },
         jrl() {
@@ -706,7 +714,6 @@ export default {
             })
 
         },
-
         dbguanbi(dbname) {
             let lj = null;
             if(dbname == "db1"){
@@ -898,9 +905,7 @@ export default {
             }, (xhr)=>{
                 if(xhr.loaded == 2148){
                     this.jiazai--;
-                    console.log('加载完成'+this.jiazai);
-                }else{
-                    console.log('加载中');
+                    console.log('车上物料加载完成'+this.jiazai);
                 }
             })
             return guidaoche
@@ -1086,7 +1091,60 @@ export default {
             }
         },
         jixxiebi1(){
-            console.log(this.k1);
+            // 1：底座旋转      -180  180
+            // 2：侧边杆	      -63   109.9
+            // 3：主臂         -235   55
+            const target = {
+                joint_1: -160,
+                joint_2: 40,
+                joint_3: -20,
+                joint_4: 0,
+                joint_5: 0,
+                joint_6: 0,
+            }
+            const tween = new TWEEN.Tween(this.paras1)
+            tween.to(target, 2000)
+            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            tween.onUpdate((object) => {
+                for(const prop in this.k1.joints){
+                    if(!this.k1.joints[prop].static){
+                        this.k1.setJointValue(prop, object[prop])
+                    }
+                }
+            })
+            tween.start();
+            tween.onComplete(() => {
+                this.jixiebi1fangyeyaji();
+            })
+
+        },
+        jixiebi1fangyeyaji(){
+            // 1：底座旋转      -180  180
+            // 2：侧边杆	      -63   109.9
+            // 3：主臂         -235   55
+            const target = {
+                joint_1: 0,
+                joint_2: 0,
+                joint_3: 0,
+                joint_4: 0,
+                joint_5: 0,
+                joint_6: 0,
+            }
+            const tween = new TWEEN.Tween(this.paras1)
+            tween.to(target, 2000)
+            tween.delay(1000);
+            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            tween.onUpdate((object) => {
+                for(const prop in this.k1.joints){
+                    if(!this.k1.joints[prop].static){
+                        this.k1.setJointValue(prop, object[prop])
+                    }
+                }
+            })
+            tween.start();
+        },
+        yeyaji(){
+             console.log(this.scene.getObjectByName("Mesh_0"))
         }
 
     },
