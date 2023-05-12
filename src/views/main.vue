@@ -5,7 +5,9 @@
             <el-button @click="quzoucailiao2">二号炉子</el-button>
             <el-button @click="quzoucailiao3">三号炉子</el-button>
             <el-button @click="jixxiebi1">机械臂1</el-button>
-            <el-button @click="yeyaji">液压机</el-button>
+<!--            <el-button @click="yeyaji">液压机</el-button>-->
+            <el-button @click="guidaosong">传送带</el-button>
+
 
 
         </el-header>
@@ -33,7 +35,7 @@ export default {
             width: null,
             height: null,
             donghuazhuangtai: 0,
-            jiazai:21,
+            jiazai:23,
             k1:null,
             k2:null,
             k3:null,
@@ -406,7 +408,7 @@ export default {
             }, (xhr)=>{
                 if(xhr.loaded == 315688){
                     this.jiazai--;
-                    console.log('第一个机械臂上的零件加载完成'+this.jiazai);
+                    console.log('液压机上的零件加载完成'+this.jiazai);
                 }
             })
             //液压机上的未加工物料
@@ -422,10 +424,10 @@ export default {
             }, (xhr)=>{
                 if(xhr.loaded == 2148){
                     this.jiazai--;
-                    console.log('第一个机械臂上的未加工物料加载完成'+this.jiazai);
+                    console.log('液压机上的未加工物料加载完成'+this.jiazai);
                 }
             })
-             //切片机上的零件
+             //切边机上的零件
              loader.load('./零件.glb', (gltf) => {
                  const model = gltf.scene;
                  model.scale.set(2.5,2.5,2.5);
@@ -433,14 +435,48 @@ export default {
                  model.translateZ(-24.7);
                  model.translateX(-38);
                  model.name = '零件3';
-                 model.visible = true;
+                 model.visible = false;
                  this.scene.add(model);
              }, (xhr)=>{
                  if(xhr.loaded == 315688){
                      this.jiazai--;
-                     console.log('第一个机械臂上的零件加载完成'+this.jiazai);
+                     console.log('切边机上的零件加载完成'+this.jiazai);
                  }
              })
+             //轨道上的零件
+             loader.load('./零件.glb', (gltf) => {
+                 const model = gltf.scene;
+                 model.scale.set(2.5,2.5,2.5);
+                 model.translateY(0.3);
+                 model.translateZ(1.1);
+                 model.translateX(-0.3);
+                 model.name = '零件4';
+                 model.visible = false;
+                 this.scene.add(model);
+             }, (xhr)=>{
+                 if(xhr.loaded == 315688){
+                     this.jiazai--;
+                     console.log('轨道上的零件加载完成'+this.jiazai);
+                 }
+             })
+             //机械臂上的未加工物料
+             loader.load('./未加工物料.glb', (gltf) => {
+                 const model = gltf.scene;
+                 model.scale.set(0.7,0.7,0.7);
+                 model.rotateX(Math.PI/2);
+                 model.translateY(-0.5);
+                 model.translateZ(-0.42);
+                 model.translateX(-0.5);
+                 model.name = '未加工物料6';
+                 model.visible = false;
+                 this.scene.add(model);
+             }, (xhr)=>{
+                 if(xhr.loaded == 2148){
+                     this.jiazai--;
+                     console.log('液压机上的未加工物料加载完成'+this.jiazai);
+                 }
+             })
+
             // loader.load('./大玩意.glb', (gltf) => {
             //     const model = gltf.scene;
             //     model.scale.set(5, 5, 5);
@@ -541,6 +577,8 @@ export default {
             this.controls.update();
             this.renderer.render(this.scene, this.camera);//渲染
             if(this.jiazai == 0){
+                this.scene.getObjectByName("传送带移动").add(this.scene.getObjectByName("零件4"));
+                this.scene.getObjectByName("机械臂1").children[0].children[0].children[1].children[0].children[0].children[0].add(this.scene.getObjectByName("未加工物料6"));
             }
 
         },
@@ -1018,6 +1056,7 @@ export default {
             tween.onComplete(() => {
                 this.scene.getObjectByName("车上零件").visible = false;
                 this.scene.getObjectByName("未加工物料4").visible = true;
+                this.jixxiebi1()
                 this.zhuazifangzhishousuo()
             })
         },
@@ -1114,6 +1153,8 @@ export default {
             })
             tween.start();
             tween.onComplete(() => {
+                this.scene.getObjectByName("未加工物料4").visible = false;
+                this.scene.getObjectByName("未加工物料6").visible = true;
                 this.jixiebi1fangyeyaji();
             })
 
@@ -1123,9 +1164,9 @@ export default {
             // 2：侧边杆	      -63   109.9
             // 3：主臂         -235   55
             const target = {
-                joint_1: 0,
-                joint_2: 0,
-                joint_3: 0,
+                joint_1: 60,
+                joint_2: 40,
+                joint_3: -40,
                 joint_4: 0,
                 joint_5: 0,
                 joint_6: 0,
@@ -1142,9 +1183,40 @@ export default {
                 }
             })
             tween.start();
+            tween.onComplete(() => {
+                this.scene.getObjectByName("未加工物料6").visible = false;
+                this.scene.getObjectByName("未加工物料5").visible = true;
+            })
         },
-        yeyaji(){
-             console.log(this.scene.getObjectByName("Mesh_0"))
+        guidaosong(){
+             console.log(this.scene.getObjectByName('传送带移动').position);
+            const tween = new TWEEN.Tween(this.scene.getObjectByName('传送带移动').position)
+            tween.to({
+                x: 0.8,
+                y: 1.7912137508392334,
+                z: -0.8949565887451172
+            }, 3500)
+            tween.onUpdate(() => {
+                this.scene.getObjectByName('传送带移动').position.set(this.scene.getObjectByName('传送带移动').position.x, this.scene.getObjectByName('传送带移动').position.y, this.scene.getObjectByName('传送带移动').position.z);
+            })
+            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            tween.start();
+            tween.onComplete(() => {
+                this.guidaohui();
+            })
+        },
+        guidaohui(){
+            const tween = new TWEEN.Tween(this.scene.getObjectByName('传送带移动').position)
+            tween.to({
+                x: 15.784725976507795,
+                y: 1.7912137508392334,
+                z: -0.8949565887451172
+            }, 3500)
+            tween.onUpdate(() => {
+                this.scene.getObjectByName('传送带移动').position.set(this.scene.getObjectByName('传送带移动').position.x, this.scene.getObjectByName('传送带移动').position.y, this.scene.getObjectByName('传送带移动').position.z);
+            })
+            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            tween.start();
         }
 
     },
