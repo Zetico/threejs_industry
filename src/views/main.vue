@@ -5,10 +5,10 @@
             <el-button @click="quzoucailiao2">二号炉子</el-button>
             <el-button @click="quzoucailiao3">三号炉子</el-button>
             <el-button @click="jixxiebi1">机械臂1</el-button>
-<!--            <el-button @click="yeyaji">液压机</el-button>-->
+            <el-button @click="qiebianji">液压机</el-button>
             <el-button @click="guidaosong">传送带</el-button>
-
-
+            <el-button @click="jixiebi1fangchuansongdai">机械臂传送带</el-button>
+            <el-button @click="jixiebi2fangzwt">机械臂2</el-button>
 
         </el-header>
         <div class="main" ref="main">
@@ -35,7 +35,7 @@ export default {
             width: null,
             height: null,
             donghuazhuangtai: 0,
-            jiazai:23,
+            jiazai:26,
             k1:null,
             k2:null,
             k3:null,
@@ -45,7 +45,7 @@ export default {
         }
     },
     methods: {
-         init() {
+        init() {
             this.width = this.$refs.main.offsetWidth
             this.height = this.$refs.main.offsetHeight
             //创建三维场景
@@ -97,11 +97,6 @@ export default {
                         this.paras1[prop] =position;
                     }
                 }
-                // console.log(dae.children[0].children[0].children[1].children[0].children[0].children[0]);
-                // dae.children[0].children[0].children[1].children[0].children[0].children[0].position.set(20, 20, 20);
-                // dae.children[0].children[0].children[1].children[0].children[0].children[0].scale.set(20, 20, 20);
-                // console.log(dae);
-                // console.log(this.k1)
                 dae.name = "机械臂1"
                 this.scene.add(dae);
                 dae.traverse((child) => {
@@ -140,7 +135,7 @@ export default {
                     }
                 })
                 dae.scale.x = dae.scale.y = dae.scale.z = 4;
-                dae.translateY(30);
+                dae.translateY(32);
                 dae.translateX(-38);
             }, (xhr)=>{
                 if(xhr.loaded == 5157221){
@@ -271,6 +266,7 @@ export default {
             //第二个
             loader.load('./切边机.glb', (gltf) => {
                 const model = gltf.scene;
+                model.children[4].name = "切边块";
                 model.traverse((child) => {
                     // 模型转到一定角度消失 DoubleSide 解决
                     if (child.material) {
@@ -288,7 +284,6 @@ export default {
                     console.log('切边机加载完成'+this.jiazai);
                 }
             })
-
 
             loader.load('./工作台.glb', (gltf) => {
                 const model = gltf.scene;
@@ -309,7 +304,7 @@ export default {
                 model.translateX(-44);
                 model.translateZ(-30);
                 model.translateY(1);
-
+                model.name = '置物台';
                 this.scene.add(model);
             }, (xhr)=>{
                 if(xhr.loaded == 8256){
@@ -399,7 +394,7 @@ export default {
             loader.load('./零件.glb', (gltf) => {
                 const model = gltf.scene;
                 model.scale.set(2.5,2.5,2.5);
-                model.translateY(2);
+                model.translateY(1.6);
                 model.translateZ(-21);
                 model.translateX(-2.7);
                 model.name = '零件2';
@@ -459,7 +454,7 @@ export default {
                      console.log('轨道上的零件加载完成'+this.jiazai);
                  }
              })
-             //机械臂上的未加工物料
+             //机械臂1上的未加工物料
              loader.load('./未加工物料.glb', (gltf) => {
                  const model = gltf.scene;
                  model.scale.set(0.7,0.7,0.7);
@@ -473,9 +468,56 @@ export default {
              }, (xhr)=>{
                  if(xhr.loaded == 2148){
                      this.jiazai--;
-                     console.log('液压机上的未加工物料加载完成'+this.jiazai);
+                     console.log('机械臂1上的未加工物料加载完成'+this.jiazai);
                  }
              })
+            //机械臂1上的零件
+            loader.load('./零件.glb', (gltf) => {
+                const model = gltf.scene;
+                model.scale.set(0.7,0.7,0.7);
+                model.rotateX(Math.PI/2);
+                model.translateY(-0.08);
+                model.translateZ(0.1);
+                model.name = '零件5';
+                model.visible = false;
+                this.scene.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 315688){
+                    this.jiazai--;
+                    console.log('机械臂1的零件加载完成'+this.jiazai);
+                }
+            })
+            //机械臂2上的零件
+            loader.load('./零件.glb', (gltf) => {
+                const model = gltf.scene;
+                model.scale.set(0.7,0.7,0.7);
+                model.rotateX(Math.PI/2);
+                model.translateY(-0.08);
+                model.translateZ(0.1);
+                model.name = '零件6';
+                model.visible = false;
+                this.scene.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 315688){
+                    this.jiazai--;
+                    console.log('机械臂2的零件加载完成'+this.jiazai);
+                }
+            })
+
+            //置物台上的零件
+            loader.load('./零件.glb', (gltf) => {
+                const model = gltf.scene;
+                model.scale.set(2.5,2.5,2.5);
+                model.translateY(1.2);
+                model.name = '零件7';
+                model.visible = false;
+                this.scene.add(model);
+            }, (xhr)=>{
+                if(xhr.loaded == 315688){
+                    this.jiazai--;
+                    console.log('置物台的零件加载完成'+this.jiazai);
+                }
+            })
 
             // loader.load('./大玩意.glb', (gltf) => {
             //     const model = gltf.scene;
@@ -532,7 +574,7 @@ export default {
 
             //创建相机（透视投影相机）
             this.camera = new THREE.PerspectiveCamera(35, this.width / this.height, 0.1, 30000000000);
-            this.camera.position.set(50, 51, 50);//相机位置
+            this.camera.position.set(-80, 29, -101);//相机位置
             //相机的方向
             this.camera.lookAt(0, 0, 0)
 
@@ -572,6 +614,7 @@ export default {
             })
         },
         animate() {
+            // console.log(this.camera.position);
             TWEEN.update();
             requestAnimationFrame(this.animate);//一直循环执行，每秒执行60次
             this.controls.update();
@@ -579,6 +622,11 @@ export default {
             if(this.jiazai == 0){
                 this.scene.getObjectByName("传送带移动").add(this.scene.getObjectByName("零件4"));
                 this.scene.getObjectByName("机械臂1").children[0].children[0].children[1].children[0].children[0].children[0].add(this.scene.getObjectByName("未加工物料6"));
+                this.scene.getObjectByName("机械臂1").children[0].children[0].children[1].children[0].children[0].children[0].add(this.scene.getObjectByName("零件5"));
+                this.scene.getObjectByName("机械臂2").children[0].children[0].children[1].children[0].children[0].children[0].add(this.scene.getObjectByName("零件6"));
+                this.scene.getObjectByName("置物台").add(this.scene.getObjectByName("零件7"));
+
+                this.jiazai--;
             }
 
         },
@@ -1141,23 +1189,23 @@ export default {
                 joint_5: 0,
                 joint_6: 0,
             }
-            const tween = new TWEEN.Tween(this.paras1)
-            tween.to(target, 2000)
-            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            const tween = new TWEEN.Tween(this.paras1);
+            tween.to(target, 2000);
+            tween.delay(1000);
+            tween.easing(TWEEN.Easing.Quadratic.InOut);
             tween.onUpdate((object) => {
                 for(const prop in this.k1.joints){
                     if(!this.k1.joints[prop].static){
                         this.k1.setJointValue(prop, object[prop])
                     }
                 }
-            })
+            });
             tween.start();
             tween.onComplete(() => {
                 this.scene.getObjectByName("未加工物料4").visible = false;
                 this.scene.getObjectByName("未加工物料6").visible = true;
                 this.jixiebi1fangyeyaji();
-            })
-
+            });
         },
         jixiebi1fangyeyaji(){
             // 1：底座旋转      -180  180
@@ -1186,23 +1234,78 @@ export default {
             tween.onComplete(() => {
                 this.scene.getObjectByName("未加工物料6").visible = false;
                 this.scene.getObjectByName("未加工物料5").visible = true;
+                this.jixiebi1huiwei();
+            })
+        },
+        jixiebi1huiwei(){
+            // 1：底座旋转      -180  180
+            // 2：侧边杆	      -63   109.9
+            // 3：主臂         -235   55
+            const target = {
+                joint_1: 0,
+                joint_2: 0,
+                joint_3: 0,
+                joint_4: 0,
+                joint_5: 0,
+                joint_6: 0,
+            }
+            const tween = new TWEEN.Tween(this.paras1)
+            tween.to(target, 2000)
+            tween.delay(500);
+            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            tween.onUpdate((object) => {
+                for(const prop in this.k1.joints){
+                    if(!this.k1.joints[prop].static){
+                        this.k1.setJointValue(prop, object[prop])
+                    }
+                }
+            })
+            tween.start();
+            tween.onComplete(() => {
+                this.yeyaji();
+            })
+        },
+        jixiebi1huiweicsd(){
+            // 1：底座旋转      -180  180
+            // 2：侧边杆	      -63   109.9
+            // 3：主臂         -235   55
+            const target = {
+                joint_1: 0,
+                joint_2: 0,
+                joint_3: 0,
+                joint_4: 0,
+                joint_5: 0,
+                joint_6: 0,
+            }
+            const tween = new TWEEN.Tween(this.paras1)
+            tween.to(target, 2000)
+            tween.delay(500);
+            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            tween.onUpdate((object) => {
+                for(const prop in this.k1.joints){
+                    if(!this.k1.joints[prop].static){
+                        this.k1.setJointValue(prop, object[prop])
+                    }
+                }
+            })
+            tween.start();
+            tween.onComplete(() => {
             })
         },
         guidaosong(){
-             console.log(this.scene.getObjectByName('传送带移动').position);
             const tween = new TWEEN.Tween(this.scene.getObjectByName('传送带移动').position)
             tween.to({
                 x: 0.8,
                 y: 1.7912137508392334,
                 z: -0.8949565887451172
             }, 3500)
+            tween.delay(1500);
             tween.onUpdate(() => {
                 this.scene.getObjectByName('传送带移动').position.set(this.scene.getObjectByName('传送带移动').position.x, this.scene.getObjectByName('传送带移动').position.y, this.scene.getObjectByName('传送带移动').position.z);
             })
-            tween.easing(TWEEN.Easing.Quadratic.InOut)
             tween.start();
             tween.onComplete(() => {
-                this.guidaohui();
+                this.jixiebi2quciaoliao();
             })
         },
         guidaohui(){
@@ -1212,13 +1315,318 @@ export default {
                 y: 1.7912137508392334,
                 z: -0.8949565887451172
             }, 3500)
+            tween.delay(1000);
             tween.onUpdate(() => {
                 this.scene.getObjectByName('传送带移动').position.set(this.scene.getObjectByName('传送带移动').position.x, this.scene.getObjectByName('传送带移动').position.y, this.scene.getObjectByName('传送带移动').position.z);
             })
-            tween.easing(TWEEN.Easing.Quadratic.InOut)
             tween.start();
-        }
-
+        },
+        yeyaji(){
+            const tween = new TWEEN.Tween(this.scene.getObjectByName('液压块').position)
+            tween.to({
+                x: -0.06983834505081177,
+                y: 1.95,
+                z: 0.21617555618286133
+            }, 3500)
+            tween.onUpdate(() => {
+                this.scene.getObjectByName('液压块').position.set(this.scene.getObjectByName('液压块').position.x, this.scene.getObjectByName('液压块').position.y, this.scene.getObjectByName('液压块').position.z);
+            })
+            tween.start();
+            tween.onComplete(() => {
+                this.scene.getObjectByName("未加工物料5").visible = false;
+                this.scene.getObjectByName("零件2").visible = true;
+                this.yeyajihui();
+            })
+        },
+        yeyajihui(){
+            const tween = new TWEEN.Tween(this.scene.getObjectByName('液压块').position)
+            tween.to({
+                x: -0.06983834505081177,
+                y: 3.5,
+                z: 0.21617555618286133
+            }, 3500)
+            tween.onUpdate(() => {
+                this.scene.getObjectByName('液压块').position.set(this.scene.getObjectByName('液压块').position.x, this.scene.getObjectByName('液压块').position.y, this.scene.getObjectByName('液压块').position.z);
+            })
+            tween.delay(1500);
+            tween.start();
+            tween.onComplete(() => {
+                this.jixiebi1quzou();
+            })
+        },
+        jixiebi1quzou(){
+            // 1：底座旋转      -180  180
+            // 2：侧边杆	      -63   109.9
+            // 3：主臂         -235   55
+            const target = {
+                joint_1: 60,
+                joint_2: 40,
+                joint_3: -20,
+                joint_4: 0,
+                joint_5: 0,
+                joint_6: 0,
+            }
+            const tween = new TWEEN.Tween(this.paras1)
+            tween.to(target, 2000)
+            tween.delay(1000);
+            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            tween.onUpdate((object) => {
+                for(const prop in this.k1.joints){
+                    if(!this.k1.joints[prop].static){
+                        this.k1.setJointValue(prop, object[prop])
+                    }
+                }
+            })
+            tween.start();
+            tween.onComplete(() => {
+                this.scene.getObjectByName("零件2").visible = false;
+                this.scene.getObjectByName("零件5").visible = true;
+                this.jixiebi1fangchuansongdai();
+            })
+        },
+        jixiebi1fangchuansongdai(){
+            // 1：底座旋转      -180  180
+            // 2：侧边杆	      -63   109.9
+            // 3：主臂         -235   55
+            const target = {
+                joint_1: -180,
+                joint_2: 40,
+                joint_3: -40,
+                joint_4: 0,
+                joint_5: 0,
+                joint_6: 0,
+            }
+            const tween = new TWEEN.Tween(this.paras1)
+            tween.to(target, 2000)
+            tween.delay(300);
+            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            tween.onUpdate((object) => {
+                for(const prop in this.k1.joints){
+                    if(!this.k1.joints[prop].static){
+                        this.k1.setJointValue(prop, object[prop])
+                    }
+                }
+            })
+            tween.start();
+            tween.onComplete(() => {
+                this.scene.getObjectByName("零件4").visible = true;
+                this.scene.getObjectByName("零件5").visible = false;
+                this.guidaosong();
+                this.jixiebi1huiweicsd()
+            })
+        },
+        jixiebi2quciaoliao(){
+            // 1：底座旋转      -180  180
+            // 2：侧边杆	      -63   109.9
+            // 3：主臂         -235   55
+            const target = {
+                joint_1: 0,
+                joint_2: 20,
+                joint_3: -20,
+                joint_4: 0,
+                joint_5: 0,
+                joint_6: 0,
+            }
+            const tween = new TWEEN.Tween(this.paras2)
+            tween.to(target, 2000)
+            // tween.delay(1000);
+            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            tween.onUpdate((object) => {
+                for(const prop in this.k2.joints){
+                    if(!this.k2.joints[prop].static){
+                        this.k2.setJointValue(prop, object[prop])
+                    }
+                }
+            })
+            tween.start();
+            tween.onComplete(() => {
+                this.scene.getObjectByName("零件4").visible = false;
+                this.scene.getObjectByName("零件6").visible = true;
+                this.guidaohui();
+                this.jixiebi2fangciaoliao()
+            })
+        },
+        jixiebi2fangciaoliao(){
+            // 1：底座旋转      -180  180
+            // 2：侧边杆	      -63   109.9
+            // 3：主臂         -235   55
+            const target = {
+                joint_1: -90,
+                joint_2: 60,
+                joint_3: -50,
+                joint_4: 0,
+                joint_5: 0,
+                joint_6: 0,
+            }
+            const tween = new TWEEN.Tween(this.paras2)
+            tween.to(target, 2000)
+            // tween.delay(1000);
+            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            tween.onUpdate((object) => {
+                for(const prop in this.k2.joints){
+                    if(!this.k2.joints[prop].static){
+                        this.k2.setJointValue(prop, object[prop])
+                    }
+                }
+            })
+            tween.start();
+            tween.onComplete(() => {
+                this.scene.getObjectByName("零件6").visible = false;
+                this.scene.getObjectByName("零件3").visible = true;
+                this.jixiebi2huiwei();
+            })
+        },
+        jixiebi2huiwei(){
+            // 1：底座旋转      -180  180
+            // 2：侧边杆	      -63   109.9
+            // 3：主臂         -235   55
+            const target = {
+                joint_1: 0,
+                joint_2: 0,
+                joint_3: 0,
+                joint_4: 0,
+                joint_5: 0,
+                joint_6: 0,
+            }
+            const tween = new TWEEN.Tween(this.paras2)
+            tween.to(target, 2000)
+            tween.delay(500);
+            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            tween.onUpdate((object) => {
+                for(const prop in this.k2.joints){
+                    if(!this.k2.joints[prop].static){
+                        this.k2.setJointValue(prop, object[prop])
+                    }
+                }
+            })
+            tween.start();
+            tween.onComplete(() => {
+                this.qiebianji();
+            })
+        },
+        qiebianji(){
+            // x -0.06983834505081177
+            // y 3.677170753479004
+            // z 0.21617555618286133
+            const tween = new TWEEN.Tween(this.scene.getObjectByName('切边块').position)
+            tween.to({
+                x: -0.06983834505081177,
+                y: 1.95,
+                z: 0.21617555618286133
+            }, 3500)
+            tween.onUpdate(() => {
+                this.scene.getObjectByName('切边块').position.set(this.scene.getObjectByName('切边块').position.x, this.scene.getObjectByName('切边块').position.y, this.scene.getObjectByName('切边块').position.z);
+            })
+            tween.start();
+            tween.onComplete(() => {
+                // this.scene.getObjectByName("未加工物料5").visible = false;
+                // this.scene.getObjectByName("零件2").visible = true;
+                this.qiebianhui();
+            })
+        },
+        qiebianhui(){
+            const tween = new TWEEN.Tween(this.scene.getObjectByName('切边块').position)
+            tween.to({
+                x: -0.06983834505081177,
+                y: 3.5,
+                z: 0.21617555618286133
+            }, 3500)
+            tween.onUpdate(() => {
+                this.scene.getObjectByName('切边块').position.set(this.scene.getObjectByName('切边块').position.x, this.scene.getObjectByName('切边块').position.y, this.scene.getObjectByName('切边块').position.z);
+            })
+            tween.delay(1500);
+            tween.start();
+            tween.onComplete(() => {
+                this.jixiebi2quzou();
+            })
+        },
+        jixiebi2quzou(){
+            // 1：底座旋转      -180  180
+            // 2：侧边杆	      -63   109.9
+            // 3：主臂         -235   55
+            const target = {
+                joint_1: -90,
+                joint_2: 60,
+                joint_3: -50,
+                joint_4: 0,
+                joint_5: 0,
+                joint_6: 0,
+            }
+            const tween = new TWEEN.Tween(this.paras2)
+            tween.to(target, 2000)
+            // tween.delay(1000);
+            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            tween.onUpdate((object) => {
+                for(const prop in this.k2.joints){
+                    if(!this.k2.joints[prop].static){
+                        this.k2.setJointValue(prop, object[prop])
+                    }
+                }
+            })
+            tween.start();
+            tween.onComplete(() => {
+                this.scene.getObjectByName("零件6").visible = true;
+                this.scene.getObjectByName("零件3").visible = false;
+                this.jixiebi2fangzwt();
+            })
+        },
+        jixiebi2fangzwt(){
+            // 1：底座旋转      -180  180
+            // 2：侧边杆	      -63   109.9
+            // 3：主臂         -235   55
+            const target = {
+                joint_1: -180,
+                joint_2: 50,
+                joint_3: -40,
+                joint_4: 0,
+                joint_5: 0,
+                joint_6: 0,
+            }
+            const tween = new TWEEN.Tween(this.paras2)
+            tween.to(target, 2000)
+            // tween.delay(1000);
+            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            tween.onUpdate((object) => {
+                for(const prop in this.k2.joints){
+                    if(!this.k2.joints[prop].static){
+                        this.k2.setJointValue(prop, object[prop])
+                    }
+                }
+            })
+            tween.start();
+            tween.onComplete(() => {
+                this.scene.getObjectByName("零件6").visible = false;
+                this.scene.getObjectByName("零件7").visible = true;
+                this.jixiebi2huiweizwt();
+            })
+        },
+        jixiebi2huiweizwt(){
+            // 1：底座旋转      -180  180
+            // 2：侧边杆	      -63   109.9
+            // 3：主臂         -235   55
+            const target = {
+                joint_1: 0,
+                joint_2: 0,
+                joint_3: 0,
+                joint_4: 0,
+                joint_5: 0,
+                joint_6: 0,
+            }
+            const tween = new TWEEN.Tween(this.paras2)
+            tween.to(target, 2000)
+            tween.delay(500);
+            tween.easing(TWEEN.Easing.Quadratic.InOut)
+            tween.onUpdate((object) => {
+                for(const prop in this.k2.joints){
+                    if(!this.k2.joints[prop].static){
+                        this.k2.setJointValue(prop, object[prop])
+                    }
+                }
+            })
+            tween.start();
+            tween.onComplete(() => {
+            })
+        },
     },
     mounted() {
         this.init();
