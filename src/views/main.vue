@@ -79,13 +79,16 @@ export default {
             this.scene.add(guidao1);
             this.scene.add(guidao2);
 
+            const loader = new GLTFLoader();
+            const cloader = new ColladaLoader();
+
             //轨道车
+
             const guidaoche = this.guidaoche();
             guidaoche.position.set(-1, 1, -6);//定义位置
             this.scene.add(guidaoche);
 
             //导入collada模型
-            const cloader = new ColladaLoader();
             //第一个
             cloader.load('./机械臂.dae', (collada)=>{
                 const dae = collada.scene;
@@ -144,7 +147,6 @@ export default {
                 }
             })
             //第三个
-            const loader = new GLTFLoader();
             loader.load('./机柜.glb', (gltf) => {
                 const model = gltf.scene;
                 model.traverse((child) => {
