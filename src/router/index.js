@@ -2,13 +2,15 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import main from '../views/main.vue'
 import login from '../views/login.vue'
-
+import axios from 'axios'
+Vue.prototype.$http = axios
+axios.defaults.baseURL = 'http://localhost:3000'
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'home',
+    name: 'login',
     component: login
   },
   {
