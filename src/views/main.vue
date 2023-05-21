@@ -1,6 +1,10 @@
 <template>
     <el-container>
         <el-header>
+            <div class="welcome">
+                <span>欢迎使用可视化车间系统</span>
+            </div>
+            <el-button type="danger">危险按钮</el-button>
 <!--            <el-button @click="quzoucailiao1">一号炉子</el-button>-->
 <!--            <el-button @click="quzoucailiao2">二号炉子</el-button>-->
 <!--            <el-button @click="quzoucailiao3">三号炉子</el-button>-->
@@ -15,44 +19,58 @@
             <el-main id="webgl">
             </el-main>
         </div>
-        <div id="messageTag" style="visibility:visible;position: absolute;color: #5a112c;z-index: 2;font-size: 16px;">
-<!--            <div style="position:relative;">-->
-<!--                <div style="position: absolute;left: 0px;top: 0px;">-->
-<!--                    <img src="../assets/信息背景.png" alt="" style="width:400px;opacity: 1.0;">-->
-<!--                    -->
-<!--                </div>-->
+        <div class="zuobian">
 
-<!--            </div>-->
-            <div class="zuobian">
-                <el-form  ref="ruleForm" label-width="100px" class="demo-ruleForm">
-                    <el-form-item label="密码" >
-                        <el-input type="password" ></el-input>
-                    </el-form-item>
-                    <el-form-item label="确认密码" >
-                        <el-input type="password" ></el-input>
-                    </el-form-item>
-                    <el-form-item label="年龄" >
-                        <el-input ></el-input>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" >提交</el-button>
-                        <el-button >重置</el-button>
-                    </el-form-item>
-                </el-form>
+            <div class="zbwenzi">车间设备状态</div>
+
+            <e-charts :option="option1" class="chart1"></e-charts>
+
+                <el-table
+                    class="chajiantb"
+                    :data="tableData"
+
+                    max-height="300px"
+                >
+                    <el-table-column
+                        prop="date"
+                        label="编号"
+                        width="80">
+                    </el-table-column>
+                    <el-table-column
+                        prop="name"
+                        label="类型"
+                        width="80">
+                    </el-table-column>
+                    <el-table-column
+                        prop="address"
+                        label="状态"
+                        width="80">
+                    </el-table-column>
+                </el-table>
+        </div>
+
+        <div class="zuoxia">
+            <div>
+                 <div class="zxwenzi">近期生产状况</div>
+                     <e-charts :option="option2" class="chart2"></e-charts>
+                      <div  class="hengtiao">
+                          <div class="wcwz">各月完成比例</div>
+                          <el-progress class="ep1" :text-inside="true" :stroke-width="30" :percentage="88.9" status="warning"></el-progress>
+                          <el-progress class="ep1" :text-inside="true" :stroke-width="30" :percentage="71.1" status="exception"></el-progress>
+                          <el-progress class="ep1" :text-inside="true" :stroke-width="30" :percentage="80" status="warning"></el-progress>
+                          <el-progress class="ep1" :text-inside="true" :stroke-width="30" :percentage="62.2" status="exception"></el-progress>
+                          <el-progress class="ep1" :text-inside="true" :stroke-width="30" :percentage="100" status="success"></el-progress>
+                      </div>
+                 </div>
+            <div>
+                <div class="byjd">本月生产进度</div>
+                <div class="yq">预期完成数（百件）：50</div>
+                <div class="ywc">目前完成数（百件）：23</div>
+                <el-progress type="dashboard" :percentage="46" :color="colors" class="dash"></el-progress>
             </div>
 
         </div>
     </el-container>
-
-
-
-
-
-
-
-
-
-
 
 
 </template>
@@ -68,6 +86,50 @@ import {CSS2DRenderer, CSS2DObject} from 'three/examples/jsm/renderers/CSS2DRend
 export default {
     data() {
         return {
+            colors: [
+                {color: '#e70000', percentage: 20},
+                {color: '#e76161', percentage: 40},
+                {color: '#e6a23c', percentage: 60},
+                {color: '#a2de90', percentage: 80},
+                {color: '#28e166', percentage: 100}
+            ],
+            tableData: [{
+                date: 'J01',
+                name: '加热炉',
+                address: '正常'
+            },{
+                date: 'J02',
+                name: '加热炉',
+                address: '正常'
+            },{
+                date: 'J03',
+                name: '加热炉',
+                address: '正常'
+            },{
+                date: 'GC01',
+                name: '轨道车',
+                address: '正常'
+            },{
+                date: 'MACH01',
+                name: '机械臂',
+                address: '正常'
+            },{
+                date: 'YY01',
+                name: '液压机',
+                address: '正常'
+            },{
+                date: 'CSD01',
+                name: '传送带',
+                address: '正常'
+            },{
+                date: 'MACH02',
+                name: '机械臂',
+                address: '正常'
+            },{
+                date: 'QB01',
+                name: '切边机',
+                address: '正常'
+            },],
             camera: null,
             scene: null,
             renderer: null,
@@ -76,6 +138,7 @@ export default {
             height: null,
             donghuazhuangtai: 0,
             jiazai: 26,
+            shebei:0,
             k1: null,
             k2: null,
             k3: null,
@@ -85,6 +148,70 @@ export default {
             chooseMesh: null,
             granaryArr:[],
         }
+    },
+    computed:{
+        option1(){
+            return {
+                gird: {
+                    top: '200',
+                },
+                series: [
+                    {
+                    name: '设备',
+                    type: 'gauge',
+                    max:9,
+                    splitNumber: 9,
+                        detail: {
+                            formatter: '{value}',
+                            color: "rgba(255, 255, 255, 1)",
+                            fontSize: 21
+                        },
+                        data: [
+                            {
+                                value: this.shebei,
+                                name: '正常设备数量',
+                            }
+                        ],
+                        progress: {
+                            show: true,
+                        },
+                        axisLabel: {
+                            show: false
+                        },
+                        axisTick: {
+                            show: false
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                shadowBlur: 9,
+                                shadowColor: "rgba(247, 57, 57, 1)"
+                            }
+                        }
+                }
+                ]
+            }
+        },
+        option2(){
+            return {
+                xAxis: {
+                    data: ["1月","2月","3月","4月","5月"]
+                },
+                yAxis: {},
+                series: [{
+                    name: '生产数量',
+                    type: 'bar',
+                    data: [40, 32, 36, 28, 45],
+                    label: {
+                        show: true
+                    },
+                    showBackground: true,
+                    backgroundStyle: {
+                        color: 'rgba(180, 180, 180, 0.2)'
+                    }
+                }]
+            }
+        }
+
     },
     methods: {
         init() {
@@ -118,6 +245,9 @@ export default {
             jrl1.children[9].name = 'db1';
             jrl2.children[9].name = 'db2';
             jrl3.children[9].name = 'db3';
+            this.shebei++;
+            this.shebei++;
+            this.shebei++;
 
             //轨道
             const guidao1 = this.guidao();
@@ -137,7 +267,7 @@ export default {
             guidaoche.position.set(-1, 1, -6);//定义位置
             this.scene.add(guidaoche);
             this.granaryArr.push(guidaoche);
-
+            this.shebei++;
             //导入collada模型
             //第一个
             cloader.load('./机械臂.dae', (collada) => {
@@ -165,6 +295,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 5157221) {
                     this.jiazai--;
+                    this.shebei++;
                     console.log('第一个机械臂加载完成' + this.jiazai);
                 }
             })
@@ -195,6 +326,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 5157221) {
                     this.jiazai--;
+                    this.shebei++;
                     console.log('第二个机械臂加载完成' + this.jiazai);
                 }
             })
@@ -245,8 +377,6 @@ export default {
             loader.load('./风扇.glb', (gltf) => {
                 const model = gltf.scene;
                 model.scale.set(1.5, 1.5, 1.5);
-                // model.translateX(-27);
-                // model.translateZ(-10)
                 model.translateY(5);
                 model.translateZ(14.5);
                 model.translateX(0.6);
@@ -300,6 +430,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 316868) {
                     this.jiazai--;
+                    this.shebei++;
                     console.log('传送带加载完成' + this.jiazai);
                 }
             })
@@ -322,6 +453,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 167835804) {
                     this.jiazai--;
+                    this.shebei++;
                     console.log('液压机加载完成' + this.jiazai);
                 }
             })
@@ -345,6 +477,8 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 167830104) {
                     this.jiazai--;
+                    this.shebei++;
+
                     console.log('切边机加载完成' + this.jiazai);
                 }
             })
@@ -637,7 +771,7 @@ export default {
 
             //创建相机（透视投影相机）
             this.camera = new THREE.PerspectiveCamera(35, this.width / this.height, 0.1, 30000000000);
-            this.camera.position.set(-80, 29, -101);//相机位置
+            this.camera.position.set(52.22396160264119, 26.635733675176027, 30.345032913799137);//相机位置
             //相机的方向
             this.camera.lookAt(0, 0, 0)
 
@@ -675,10 +809,11 @@ export default {
                 // console.log(this.$refs.main.offsetWidth);
                 // console.log(this.$refs.main.offsetHeight);
             });
-            addEventListener('click', this.choose); // 监听窗口鼠标单击事件,鼠标单击选中某个国家Mesh
+            // addEventListener('click', this.choose); // 监听窗口鼠标单击事件,鼠标单击选中某个国家Mesh
 
         },
         animate() {
+            // console.log(this.camera.position)
             TWEEN.update();
             requestAnimationFrame(this.animate);//一直循环执行，每秒执行60次
             this.controls.update();
@@ -1739,6 +1874,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.welcome{
+    margin-left: 20px;
+}
 .el-container {
   height: 100%;
   width: 100%;
@@ -1752,6 +1890,13 @@ export default {
   //color: #333;
   //text-align: center;
   //line-height: 60px;
+    background-color: #1612DBFF;
+    display: flex;
+    justify-content: space-between;
+    padding-left: 0;
+    align-items: center;
+    color: aliceblue;
+    font-size: 20px;
 }
 
 .el-main {
@@ -1759,7 +1904,6 @@ export default {
   color: #333;
   text-align: center;
   height: 100%;
-
   padding: 0;
 }
 
@@ -1767,9 +1911,114 @@ export default {
   height: 100%;
 }
 .zuobian{
-    margin-top: 60px;
+    position: absolute;
+    height: 350px;
+    width: 600px;
+    margin-top: 65px;
     margin-left: 10px;
-
-    background-color: #0066ff;
+    border-radius: 20px;
+    background-color: #9bbcef;
+    opacity: 0.8;
 }
+.zbwenzi{
+    position: absolute;
+    margin-top: 10px;
+    margin-left: 250px;
+    color: aliceblue;
+    font-size: 20px;
+}
+.chart1{
+    position: absolute;
+    width: 300px;
+}
+.chart2{
+    position: absolute;
+    margin-left: 15px;
+    height: 500px;
+    width: 300px;
+}
+.chajiantb{
+    position: absolute;
+    margin-top: 40px;
+    margin-left: 330px;
+
+    font-size: 1px;
+    width: 240px;
+    color: #5a112c;
+}
+.zuoxia{
+    position: absolute;
+    height: 660px;
+    width: 600px;
+    margin-top: 440px;
+    margin-left: 10px;
+    border-radius: 20px;
+    background-color: #9bbcef;
+    opacity: 0.8;
+
+}
+.zxwenzi{
+    position: absolute;
+    margin-top: 10px;
+    margin-left: 250px;
+    color: aliceblue;
+    font-size: 20px;
+}
+
+.hengtiao{
+    position: absolute;
+    margin-top: 60px;
+    margin-left: 330px;
+    padding: 20px;
+    width: 240px;
+    color: #5a112c;
+}
+.wcwz{
+    position: absolute;
+    margin-left: 70px;
+    color: #5a112c;
+}
+.ep1{
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.byjd{
+    position: absolute;
+    margin-top: 490px;
+    margin-left: 30px;
+    writing-mode: vertical-lr;
+    //设置文字间距
+    letter-spacing: 5px;
+    //文字粗细
+    font-weight: 700;
+    //文字大小
+    font-size: 18px;
+    color: #5a112c;
+}
+.yq{
+    position: absolute;
+    margin-top: 500px;
+    margin-left: 80px;
+    letter-spacing: 2px;
+    color: #5a112c;
+}
+.ywc{
+    position: absolute;
+    margin-top: 590px;
+    margin-left: 80px;
+    letter-spacing: 2px;
+    color: #5a112c;
+}
+.dash{
+    position: absolute;
+    margin-top: 490px;
+    margin-left: 350px;
+    //文字粗细
+    font-weight: 700;
+    //文字大小
+    font-size: 18px;
+    color: #5a112c;
+}
+
 </style>

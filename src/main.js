@@ -4,8 +4,22 @@ import App from './App.vue'
 import router from './router'
 import './plugins/element.js'
 import axios from 'axios'
+import 'echarts'
+import ECharts from 'vue-echarts'
+
+
+
+Vue.component('ECharts', ECharts)
+
+
+
+
+
 
 Vue.config.productionTip = false
+
+
+
 
 new Vue({
   router,
