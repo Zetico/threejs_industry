@@ -1,0 +1,30 @@
+{
+  "id": "4078697",
+  "name": "three",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "5387433",
+      "name": "温湿度传感器",
+      "font_class": "wenshiduchuanganqi",
+      "unicode": "ead7",
+      "unicode_decimal": 60119
+    },
+    {
+      "icon_id": "12025928",
+      "name": "粉尘",
+      "font_class": "fenchen",
+      "unicode": "ed74",
+      "unicode_decimal": 60788
+    },
+    {
+      "icon_id": "13805010",
+      "name": "温度",
+      "font_class": "wendu",
+      "unicode": "e788",
+      "unicode_decimal": 59272
+    }
+  ]
+}

@@ -1,10 +1,10 @@
-<template>
-    <el-container>
+<template >
+    <el-container v-loading.fullscreen.lock="fullscreenLoading" :element-loading-text="jzwz">
         <el-header>
             <div class="welcome">
                 <span>欢迎使用可视化车间系统</span>
             </div>
-            <el-button type="danger">危险按钮</el-button>
+            <el-button type="danger" @click="quzoucailiao2" >危险按钮</el-button>
 <!--            <el-button @click="quzoucailiao1">一号炉子</el-button>-->
 <!--            <el-button @click="quzoucailiao2">二号炉子</el-button>-->
 <!--            <el-button @click="quzoucailiao3">三号炉子</el-button>-->
@@ -13,7 +13,6 @@
 <!--            <el-button @click="guidaosong">传送带</el-button>-->
 <!--            <el-button @click="jixiebi1fangchuansongdai">机械臂传送带</el-button>-->
 <!--            <el-button @click="jixiebi2fangzwt">机械臂2</el-button>-->
-
         </el-header>
         <div class="main" ref="main">
             <el-main id="webgl">
@@ -28,8 +27,9 @@
                 <el-table
                     class="chajiantb"
                     :data="tableData"
-
                     max-height="300px"
+                    :header-cell-style="{}"
+                    :cell-style="{}"
                 >
                     <el-table-column
                         prop="date"
@@ -68,7 +68,103 @@
                 <div class="ywc">目前完成数（百件）：23</div>
                 <el-progress type="dashboard" :percentage="46" :color="colors" class="dash"></el-progress>
             </div>
+        </div>
 
+        <div class="zhongxia">
+            <div class="stepwz">当前生产状态</div>
+            <el-steps :active="active" finish-status="finish" space="250px" class="step" >
+                <el-step title="加热"></el-step>
+                <el-step title="压制"></el-step>
+                <el-step title="冷却"></el-step>
+                <el-step title="切边"></el-step>
+            </el-steps>
+        </div>
+
+        <div class="youshang">
+            <div class="yswz">车间环境情况</div>
+                <div class="wendu">环境温度</div>
+                <div class="shidu">环境湿度</div>
+                <div class="fenchen">粉尘浓度</div>
+            <span class="iconfont icon-wendu" style="
+                    font-size: 70px;position: absolute;margin-top: 45px;margin-left: 85px"></span>
+            <span class="iconfont icon-wenshiduchuanganqi" style="
+                    font-size: 70px;position: absolute;margin-top: 45px;margin-left: 330px"></span>
+            <span class="iconfont icon-fenchen" style="
+                    font-size: 70px;position: absolute;margin-top: 185px;margin-left: 210px"></span>
+            <div class="wenduwz">26°C</div>
+            <div class="shiduwz">42%</div>
+            <div class="fenchenwz">1.1mg/m³</div>
+        </div>
+
+        <div class="youzhong">
+            <div class="yzwz">生产件信息</div>
+            <el-card class="box-card1">
+                <div slot="header" class="clearfix">
+                    <span style="font-size: 12px">生产批次号</span>
+                </div>
+                <div>Dz23053</div>
+            </el-card>
+            <el-card class="box-card2">
+                <div slot="header" class="clearfix">
+                    <span style="font-size: 12px">生产材料号</span>
+                </div>
+                <div>CRA109</div>
+            </el-card>
+            <el-card class="box-card3">
+            <div slot="header" class="clearfix">
+                <span style="font-size: 12px">目标锻件号</span>
+            </div>
+                <div>PXK091</div>
+            </el-card>
+        </div>
+
+        <div class="youxia">
+            <div class="andon">Andon看板</div>
+                <el-table
+                    class="andontb"
+                    :data="andonData"
+                    border
+                    max-height="380px"
+                    >
+
+                    <el-table-column
+                        prop="bh"
+                        label="设备号"
+                        width="63">
+                    </el-table-column>
+
+                    <el-table-column
+                        prop="mc"
+                        label="设备名"
+                        width="63">
+                    </el-table-column>
+
+                    <el-table-column
+                        prop="mx"
+                        label="异常明细"
+                        width="120">
+                    </el-table-column>
+
+                    <el-table-column
+                        prop="sj"
+                        label="时间"
+                        width="100">
+                    </el-table-column>
+
+                    <el-table-column
+                        prop="zt"
+                        label="状态"
+                        width="63">
+                    </el-table-column>
+
+                    <el-table-column
+                        label="操作"
+                        width="50">
+                        <template slot-scope="scope">
+                            <el-button @click="handleClick(scope.row)" type="text" >处理</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
         </div>
     </el-container>
 
@@ -86,6 +182,9 @@ import {CSS2DRenderer, CSS2DObject} from 'three/examples/jsm/renderers/CSS2DRend
 export default {
     data() {
         return {
+            jzwz:"加载哈哈哈哈哈哈",
+            fullscreenLoading: true,
+            active: 0,
             colors: [
                 {color: '#e70000', percentage: 20},
                 {color: '#e76161', percentage: 40},
@@ -130,6 +229,34 @@ export default {
                 name: '切边机',
                 address: '正常'
             },],
+            andonData:[
+                {
+                    bh:'J01',
+                    mc:'加热炉',
+                    mx:'挡板开启异常',
+                    sj:'2023-05-01 12:00:00',
+                    zt:'结束'
+                },
+                {
+                    bh:'GC01',
+                    mc:'轨道车',
+                    mx:'转轴异响',
+                    sj:'2023-05-03 11:45:10',
+                    zt:'结束'
+                },                {
+                    bh:'J01',
+                    mc:'YY01',
+                    mx:'液压缸压力不足',
+                    sj:'2023-05-11 16:11:37',
+                    zt:'处理中'
+                },                {
+                    bh:'MACH01',
+                    mc:'机械臂',
+                    mx:'机械臂主轴卡死',
+                    sj:'2023-06-08 09:13:29',
+                    zt:'待处理'
+                },
+            ],
             camera: null,
             scene: null,
             renderer: null,
@@ -227,6 +354,7 @@ export default {
                 // opacity:0.6//透明程度
                 side: THREE.DoubleSide,
             })
+            //加入三维坐标轴
 
             const jrl1 = this.jrl();
             jrl1.name= '一号加热炉';
@@ -263,7 +391,6 @@ export default {
             //轨道车
 
             const guidaoche = this.guidaoche();
-            guidaoche.name= '轨道车';
             guidaoche.position.set(-1, 1, -6);//定义位置
             this.scene.add(guidaoche);
             this.granaryArr.push(guidaoche);
@@ -296,6 +423,7 @@ export default {
                 if (xhr.loaded == 5157221) {
                     this.jiazai--;
                     this.shebei++;
+                    this.jzwz="机械臂1加载完成"
                     console.log('第一个机械臂加载完成' + this.jiazai);
                 }
             })
@@ -327,6 +455,7 @@ export default {
                 if (xhr.loaded == 5157221) {
                     this.jiazai--;
                     this.shebei++;
+                    this.jzwz="机械臂2加载完成"
                     console.log('第二个机械臂加载完成' + this.jiazai);
                 }
             })
@@ -349,6 +478,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 1430660) {
                     this.jiazai--;
+                    this.jzwz="机柜1加载完成"
                     console.log('机柜1加载完成' + this.jiazai);
                 }
             })
@@ -371,6 +501,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 1430660) {
                     this.jiazai--;
+                    this.jzwz="机柜2加载完成"
                     console.log('机柜2加载完成' + this.jiazai);
                 }
             })
@@ -384,6 +515,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 204676) {
                     this.jiazai--;
+                    this.jzwz="风扇1加载完成"
                     console.log('风扇1加载完成' + this.jiazai);
                 }
             })
@@ -399,6 +531,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 204676) {
                     this.jiazai--;
+                    this.jzwz="风扇2加载完成"
                     console.log('风扇2加载完成' + this.jiazai);
                 }
             })
@@ -414,6 +547,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 204676) {
                     this.jiazai--;
+                    this.jzwz="风扇3加载完成"
                     console.log('风扇3加载完成' + this.jiazai);
                 }
             })
@@ -431,6 +565,7 @@ export default {
                 if (xhr.loaded == 316868) {
                     this.jiazai--;
                     this.shebei++;
+                    this.jzwz="传送带加载完成"
                     console.log('传送带加载完成' + this.jiazai);
                 }
             })
@@ -454,6 +589,7 @@ export default {
                 if (xhr.loaded == 167835804) {
                     this.jiazai--;
                     this.shebei++;
+                    this.jzwz="液压机加载完成"
                     console.log('液压机加载完成' + this.jiazai);
                 }
             })
@@ -478,7 +614,7 @@ export default {
                 if (xhr.loaded == 167830104) {
                     this.jiazai--;
                     this.shebei++;
-
+                    this.jzwz="切边机加载完成"
                     console.log('切边机加载完成' + this.jiazai);
                 }
             })
@@ -492,6 +628,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 8304) {
                     this.jiazai--;
+                    this.jzwz="工作台加载完成"
                     console.log('工作台加载完成' + this.jiazai);
                 }
             })
@@ -506,6 +643,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 8256) {
                     this.jiazai--;
+                    this.jzwz="置物台加载完成"
                     console.log('置物台加载完成' + this.jiazai);
                 }
             })
@@ -521,6 +659,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 2148) {
                     this.jiazai--;
+                    this.jzwz="未加工物料1加载完成"
                     console.log('加热炉一中的零件加载完成' + this.jiazai);
                 }
             })
@@ -536,6 +675,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 2148) {
                     this.jiazai--;
+                    this.jzwz="未加工物料2加载完成"
                     console.log('加热炉二中的零件加载完成' + this.jiazai);
                 }
             })
@@ -551,6 +691,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 2148) {
                     this.jiazai--;
+                    this.jzwz="未加工物料3加载完成"
                     console.log('加热炉三中的零件加载完成' + this.jiazai);
                 }
             })
@@ -567,6 +708,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 2148) {
                     this.jiazai--;
+                    this.jzwz="工作台上的未加工物料加载完成"
                     console.log('工作台上的未加工物料加载完成' + this.jiazai);
                 }
             })
@@ -583,6 +725,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 315688) {
                     this.jiazai--;
+                    this.jzwz= "工作台上的零件加载完成"
                     console.log('工作台上的零件加载完成' + this.jiazai);
                 }
             })
@@ -600,6 +743,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 315688) {
                     this.jiazai--;
+                    this.jzwz="液压机上的零件加载完成"
                     console.log('液压机上的零件加载完成' + this.jiazai);
                 }
             })
@@ -616,6 +760,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 2148) {
                     this.jiazai--;
+                    this.jzwz="液压机上的未加工物料加载完成"
                     console.log('液压机上的未加工物料加载完成' + this.jiazai);
                 }
             })
@@ -632,6 +777,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 315688) {
                     this.jiazai--;
+                    this.jzwz="切边机上的零件加载完成"
                     console.log('切边机上的零件加载完成' + this.jiazai);
                 }
             })
@@ -648,6 +794,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 315688) {
                     this.jiazai--;
+                    this.jzwz="轨道上的零件加载完成"
                     console.log('轨道上的零件加载完成' + this.jiazai);
                 }
             })
@@ -665,6 +812,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 2148) {
                     this.jiazai--;
+                    this.jzwz="机械臂1上的未加工物料加载完成"
                     console.log('机械臂1上的未加工物料加载完成' + this.jiazai);
                 }
             })
@@ -681,6 +829,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 315688) {
                     this.jiazai--;
+                    this.jzwz="机械臂1上的零件加载完成"
                     console.log('机械臂1的零件加载完成' + this.jiazai);
                 }
             })
@@ -697,6 +846,7 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 315688) {
                     this.jiazai--;
+                    this.jzwz="机械臂2上的零件加载完成"
                     console.log('机械臂2的零件加载完成' + this.jiazai);
                 }
             })
@@ -712,9 +862,12 @@ export default {
             }, (xhr) => {
                 if (xhr.loaded == 315688) {
                     this.jiazai--;
+                    this.jzwz="置物台的零件加载完成"
                     console.log('置物台的零件加载完成' + this.jiazai);
                 }
             })
+
+
 
             // loader.load('./大玩意.glb', (gltf) => {
             //     const model = gltf.scene;
@@ -750,8 +903,8 @@ export default {
 
 
             //创建一个三维坐标轴
-            const axesHelper = new THREE.AxesHelper(150);
-            this.scene.add(axesHelper);
+            // const axesHelper = new THREE.AxesHelper(150);
+            // this.scene.add(axesHelper);
 
             //创建一个点光源
             const pointlight = new THREE.PointLight(0xffffff, 0.2);
@@ -824,7 +977,7 @@ export default {
                 this.scene.getObjectByName("机械臂1").children[0].children[0].children[1].children[0].children[0].children[0].add(this.scene.getObjectByName("零件5"));
                 this.scene.getObjectByName("机械臂2").children[0].children[0].children[1].children[0].children[0].children[0].add(this.scene.getObjectByName("零件6"));
                 this.scene.getObjectByName("置物台").add(this.scene.getObjectByName("零件7"));
-                console.log(this.granaryArr)
+                this.fullscreenLoading = false;
                 this.jiazai--;
             }
 
@@ -1532,6 +1685,7 @@ export default {
             tween.start();
         },
         yeyaji() {
+            this.active++;
             const tween = new TWEEN.Tween(this.scene.getObjectByName('液压块').position)
             tween.to({
                 x: -0.06983834505081177,
@@ -1565,6 +1719,7 @@ export default {
             })
         },
         jixiebi1quzou() {
+            this.active++
             // 1：底座旋转      -180  180
             // 2：侧边杆	      -63   109.9
             // 3：主臂         -235   55
@@ -1715,6 +1870,7 @@ export default {
             })
         },
         qiebianji() {
+            this.active++;
             // x -0.06983834505081177
             // y 3.677170753479004
             // z 0.21617555618286133
@@ -1811,6 +1967,7 @@ export default {
             })
         },
         jixiebi2huiweizwt() {
+            this.active = 0
             // 1：底座旋转      -180  180
             // 2：侧边杆	      -63   109.9
             // 3：主臂         -235   55
@@ -1835,6 +1992,7 @@ export default {
             })
             tween.start();
             tween.onComplete(() => {
+                this.scene.getObjectByName("零件7").visible = false;
                 this.donghuazhuangtai = 0;
             })
         },
@@ -1863,6 +2021,23 @@ export default {
                 // console.log("选中的mesh", intersects);
                 this.chooseMesh.material.color.set(0x00ffff);//选中改变颜色，这样材质颜色贴图.map和color颜色会相乘
             }
+        },
+        next() {
+            if (this.active++ > 3) this.active = 0;
+        },
+        handleClick(row) {
+            if(row.zt == "结束"){
+                this.$notify.error({
+                    message: '该任务已经处理完成！'
+                });
+            }
+            if(row.zt == "处理中"){
+                this.$notify({
+                    message: '该任务已被其他人接管！',
+                    type: 'warning'
+                });
+            }
+            console.log(row);
         }
     },
     mounted() {
@@ -1905,6 +2080,8 @@ export default {
   text-align: center;
   height: 100%;
   padding: 0;
+    overflow: hidden;
+
 }
 
 .main {
@@ -1941,7 +2118,7 @@ export default {
     position: absolute;
     margin-top: 40px;
     margin-left: 330px;
-
+    background-color: #28e166;
     font-size: 1px;
     width: 240px;
     color: #5a112c;
@@ -2020,5 +2197,147 @@ export default {
     font-size: 18px;
     color: #5a112c;
 }
+.zhongxia{
+    position: absolute;
+    height: 150px;
+    width: 900px;
+    margin-top: 900px;
+    margin-left: 700px;
+    border-radius: 20px;
+    background-color: #9bbcef;
+    opacity: 0.8;
+}
+.step{
 
+    margin-top: 70px;
+    margin-left: 150px;
+}
+.stepwz{
+    position: absolute;
+    margin-top: 10px;
+    margin-left: 390px;
+    color: aliceblue;
+    font-size: 20px;
+}
+.youshang{
+    position: absolute;
+    height: 350px;
+    width: 500px;
+    margin-top: 65px;
+    margin-left: 1680px;
+    border-radius: 20px;
+    background-color: #9bbcef;
+    opacity: 0.8;
+}
+.yswz{
+    position: absolute;
+    margin-top: 10px;
+    margin-left: 180px;
+    color: aliceblue;
+    font-size: 20px;
+}
+.wendu{
+    position: absolute;
+    margin-top: 150px;
+    margin-left: 90px;
+    color: #5a112c;
+}
+.shidu{
+    position: absolute;
+    margin-top: 150px;
+    margin-left: 335px;
+    color: #5a112c;
+}
+.fenchen{
+    position: absolute;
+    margin-top: 290px;
+    margin-left: 215px;
+    color: #5a112c;
+}
+.wenduwz{
+    position: absolute;
+    margin-top: 118px;
+    margin-left: 90px;
+    color: #ffffff;
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    font-size: 30px;
+}
+.shiduwz{
+    position: absolute;
+    margin-top: 118px;
+    margin-left: 340px;
+    color: #ffffff;
+    font-size: 30px;
+}
+.fenchenwz{
+    position: absolute;
+    margin-top: 258px;
+    margin-left: 205px;
+    color: #ffffff;
+    font-size: 20px;
+}
+.youzhong{
+    position: absolute;
+    height: 200px;
+    width: 500px;
+    margin-top: 433px;
+    margin-left: 1680px;
+    border-radius: 20px;
+    background-color: #9bbcef;
+    opacity: 0.8;
+}
+.yzwz{
+    position: absolute;
+    margin-top: 10px;
+    margin-left: 200px;
+    color: aliceblue;
+    font-size: 20px;
+}
+.box-card1{
+    position: absolute;
+    margin-top: 60px;
+    margin-left: 40px;
+    width: 100px;
+    background-color: #9bc0ee;
+    opacity: 0.8;
+}
+.box-card2{
+    position: absolute;
+    margin-top: 60px;
+    margin-left: 200px;
+    width: 100px;
+    background-color: #9bc0ee;
+    opacity: 0.8;
+}
+.box-card3{
+    position: absolute;
+    margin-top: 60px;
+    margin-left: 360px;
+    width: 100px;
+    background-color: #9bc0ee;
+    opacity: 0.8;
+}
+.youxia{
+    position: absolute;
+    height: 450px;
+    width: 500px;
+    margin-top: 650px;
+    margin-left: 1680px;
+    border-radius: 20px;
+    background-color: #9bbcef;
+    opacity: 0.8;
+}
+.andon{
+    position: absolute;
+    margin-top: 10px;
+    margin-left: 200px;
+    color: aliceblue;
+    font-size: 20px;
+}
+.andontb{
+    position: absolute;
+    margin-top: 50px;
+    margin-left: 20px;
+    width: 460px;
+}
 </style>

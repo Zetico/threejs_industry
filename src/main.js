@@ -8,18 +8,9 @@ import 'echarts'
 import ECharts from 'vue-echarts'
 
 
-
 Vue.component('ECharts', ECharts)
 
-
-
-
-
-
 Vue.config.productionTip = false
-
-
-
 
 new Vue({
   router,

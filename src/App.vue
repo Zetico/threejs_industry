@@ -19,6 +19,7 @@ export default {
 </script>
 
 <style>
+@import url(@/components/v-icon/iconfont.css);
 html,body,#app{
   width: 100%;
   height: 100%;
